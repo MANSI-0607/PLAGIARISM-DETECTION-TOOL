@@ -82,17 +82,15 @@ def calculate_burstiness(text):
     variance = sum((f - avg) ** 2 for f in freqs) / len(freqs)
     return variance / (avg ** 2)
 
+
 def is_generated_text(perplexity, burstiness_score):
-    """
-    DISCLAIMER: This function does NOT detect plagiarism or definitively 
-    prove whether text is AI-generated or human-written. 
-    It only provides an approximate indicator based on perplexity 
-    and burstiness patterns. Use results responsibly.
-    """
+    disclaimer = "**DISCLAIMER: This tool does NOT detect plagiarism or definitively prove authorship. It only provides an approximate indicator based on perplexity and burstiness patterns. Use results responsibly.**"
+    print(disclaimer)
     score = max(0, 100 - perplexity) * (1 - min(burstiness_score, 1))
     if score > 50:
         return f"Likely AI-generated (score {score:.1f})"
     return f"Likely human-written (score {score:.1f})"
+
 
 def main():
     st.title("Language Model Text Analysis")

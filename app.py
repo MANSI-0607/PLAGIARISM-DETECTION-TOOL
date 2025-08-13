@@ -84,12 +84,19 @@ def calculate_burstiness(text):
 
 
 def is_generated_text(perplexity, burstiness_score):
-    disclaimer = "**DISCLAIMER: This tool does NOT detect plagiarism or definitively prove authorship. It only provides an approximate indicator based on perplexity and burstiness patterns. Use results responsibly.**"
-    print(disclaimer)
+    disclaimer = "**DISCLAIMER: This tool does NOT detect plagiarism or definitively prove authorship. " \
+                 "It only provides an approximate indicator based on perplexity and burstiness patterns. " \
+                 "Use results responsibly.**"
+    
     score = max(0, 100 - perplexity) * (1 - min(burstiness_score, 1))
+    
     if score > 50:
-        return f"Likely AI-generated (score {score:.1f})"
-    return f"Likely human-written (score {score:.1f})"
+        result = f"Likely AI-generated (score {score:.1f})"
+    else:
+        result = f"Likely human-written (score {score:.1f})"
+    
+    return disclaimer, result
+
 
 
 def main():

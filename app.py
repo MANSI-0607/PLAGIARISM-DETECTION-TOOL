@@ -84,18 +84,21 @@ def calculate_burstiness(text):
 
 
 def is_generated_text(perplexity, burstiness_score):
-    disclaimer = "**DISCLAIMER: This tool does NOT detect plagiarism or definitively prove authorship. " \
-                 "It only provides an approximate indicator based on perplexity and burstiness patterns. " \
-                 "Use results responsibly.**"
-    
+    disclaimer = """
+    <div style='padding:10px;border-radius:8px;background-color:#fce4ec;color:#c2185b;'>
+    <b>DISCLAIMER:</b> This tool does NOT detect plagiarism or definitively prove authorship. 
+    It only provides an approximate indicator based on perplexity and burstiness patterns. 
+    Use results responsibly.
+    </div>
+    """
     score = max(0, 100 - perplexity) * (1 - min(burstiness_score, 1))
-    
     if score > 50:
-        result = f"Likely AI-generated (score {score:.1f})"
+        st.error(f"Likely AI-generated (score {score:.1f})")
     else:
-        result = f"Likely human-written (score {score:.1f})"
-    
-    return disclaimer, result
+        st.success(f"Likely human-written (score {score:.1f})")
+
+    return disclaimer
+
 
 
 
@@ -106,7 +109,6 @@ def main():
     if st.button("Analyze"):
         if text.strip():
             model = train_unigram_model()
-
             perplexity = calculate_perplexity(text, model)
             burstiness_score = calculate_burstiness(text)
 
@@ -114,13 +116,16 @@ def main():
             col1.metric("Perplexity", f"{perplexity:.2f}")
             col2.metric("Burstiness", f"{burstiness_score:.2f}")
 
-            st.write("**Text Analysis Result:**", is_generated_text(perplexity, burstiness_score))
+            disclaimer= is_generated_text(perplexity, burstiness_score)
+            st.markdown(disclaimer, unsafe_allow_html=True)
+
 
             st.subheader("Word Frequency Analysis")
             plot_most_common_words(text)
             plot_repeated_words(text)
         else:
             st.warning("Please enter some text to analyze.")
+
 
 if __name__ == "__main__":
     main()
